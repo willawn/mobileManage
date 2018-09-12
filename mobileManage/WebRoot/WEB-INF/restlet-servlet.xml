@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+
+	<bean id="component.context"
+		class="org.springframework.beans.factory.config.PropertyPathFactoryBean" />
+
+
+	<bean id="componentChildContext" class="org.restlet.Context">
+		<lookup-method name="createChildContext" bean="component.context" />
+	</bean>
+
+	<bean id="component" class="org.restlet.ext.spring.SpringComponent">
+		<property name="defaultHost" ref="defaultHost" />
+	</bean>
+
+	<bean id="defaultHost" class="org.restlet.ext.spring.SpringHost">
+		<constructor-arg ref="component" />
+		<property name="defaultAttachment" ref="defaultApplication" />
+	</bean>
+
+
+	<bean id="defaultApplication" class="org.restlet.Application">
+		<constructor-arg ref="componentChildContext" />
+	</bean>
+
+	<bean name="root" class="com.zushou365.rest.filter.CommonFilter">
+		<property name="next" ref="root1" />
+	</bean>
+
+	<bean name="root1" class="org.restlet.ext.spring.SpringRouter">
+
+		<property name="attachments">
+			<map>
+				<entry key="/new/house">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="NewHouseResource" />
+					</bean>
+				</entry>
+				<entry key="/usercheck">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="UserCheckResource" />
+					</bean>
+				</entry>
+				<entry key="/project">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="houseProjectResource" />
+					</bean>
+				</entry>
+
+				<entry key="/houseEva">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="houseEvaluationResource" />
+					</bean>
+				</entry>
+
+				<entry key="/websites">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="webSitesResource" />
+					</bean>
+				</entry>
+
+				<entry key="/action">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="actionResource" />
+					</bean>
+				</entry>
+
+				<entry key="/pj">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create" bean="EvaluationListResource" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="tastyConfigAction" class="com.zushou365.rest.action.TastyConfigAction">
+		<property name="tastyService" ref="tastyService" />
+	</bean>
+
+	<bean id="BaseResource" class="com.zushou365.rest.resource.BaseResource"
+		scope="prototype">
+		<property name="tastyConfigAction" ref="tastyConfigAction" />
+		<property name="tastyService" ref="tastyService" />
+	</bean>
+
+
+	<bean id="houseProjectResource" class="com.zushou365.rest.resource.ProjectResource"
+		parent="ListResource" />
+
+	<bean id="ListResource" class="com.zushou365.rest.resource.ListResource"
+		parent="BaseResource" />
+
+	<bean id="UserCheckResource" class="com.zushou365.rest.resource.UserCheckResource"
+		parent="BaseResource" />
+
+	<bean id="houseEvaluationResource" class="com.zushou365.rest.resource.HouseEvaluationResource"
+		parent="BaseResource" />
+
+	<bean id="NewHouseResource" class="com.zushou365.rest.resource.NewHouseResource"
+		parent="ListResource" />
+
+	<bean id="EvaluationListResource"
+		class="com.zushou365.rest.resource.HouseEvaluationListResources"
+		parent="ListResource" />
+
+
+	<bean id="actionResource" class="com.zushou365.rest.resource.ActionResource"
+		parent="BaseResource">
+		<property name="postServer" ref="postServerProxy"></property>
+	</bean>
+
+	<bean id="postServerProxy" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+		<property name="serviceUrl" value="rmi://61.129.81.38:1199/PostServer" />
+		<property name="serviceInterface" value="com.zushou365.postserver.service.PostServer" />
+		<property name="lookupStubOnStartup" value="false" />
+		<property name="refreshStubOnConnectFailure" value="true" />
+	</bean>
+
+</beans>

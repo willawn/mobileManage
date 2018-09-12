@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation=" http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+			
+	<!--
+		<import
+		resource="classpath:com/anysoweb/bookstore/store/store-servlet.xml"/>
+	-->
+
+	<!-- 
+	<bean id="adminHandlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="main.do">mainController</prop>
+				<prop key="hzy.do">hzy</prop>
+				<prop key="user.do">userController</prop>
+				<prop key="activities.do">activitiesController</prop>
+				<prop key="qixi/*.do">qixiMultiActionController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="userController" class="com.tastysoft.swct.web.UserController">
+		<property name="tastyConfigAction" ref="tastyConfigAction" />
+	</bean>
+
+	<bean id="activitiesController" class="com.tastysoft.swct.web.ActivitiesController">
+		<property name="tastyConfigAction" ref="tastyConfigAction" />
+	</bean>
+
+	<bean id="tastyConfigAction" class="com.tastysoft.core.actions.TastyConfigAction">
+	</bean>
+	 -->
+
+	<!--
+		在Spring2.0中可以不指定View，而由RequestToViewNameTranslator，根据请求来提供View名 称。如想使用
+		RequestToViewNameTranslator那么请作如下配置，那么就会根据请求来选择提供View，然后在
+
+		viewResolver中找页面
+	-->
+
+
+	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 对指定包中的所有类进行扫描，以完成Bean创建和自动依赖注入的功能 -->
+	<context:component-scan base-package="com.zushou365.manage" />
+
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="com.zushou365.manage.comm.web.ApsBindingInitializer" />
+		</property>
+	</bean>
+</beans>

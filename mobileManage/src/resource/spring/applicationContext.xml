@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:datasource.properties</value>
+				<value>classpath*:hibernate.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 事务管理器  -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"></ref>
+		</property>
+	</bean>
+	
+	<!-- 日志AOP
+	<bean id="methodAdive" class="com.stepsaas.comm.AOPLogBean"></bean>
+	<aop:config>
+		<aop:pointcut id="allMethod"
+			expression="execution(* ccom.zushou365.*.*.service.impl.*.*(..))" />
+		<aop:aspect id="logAspect" ref="methodAdive">
+			<aop:around method="intercept" pointcut-ref="allMethod" />
+		</aop:aspect>
+	</aop:config>
+	 -->
+	
+	<bean id="hibernateBaseDAO" class="com.zushou365.manage.comm.dao.HibernateBaseDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	
+	<!-- 
+	<bean id="baseDAO" class="com.zushou365.manage.comm.dao.impl.BaseDAOImpl">
+	</bean>
+	
+	<bean id="baseService" class="com.zushou365.manage.comm.service.impl.BaseServiceImpl">
+		<property name="baseDAO">
+			<ref bean="baseDAO" />
+		</property>
+	</bean>
+	 -->
+	 
+</beans>
